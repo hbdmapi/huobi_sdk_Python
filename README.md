@@ -42,7 +42,11 @@ client = Account(ACCESS_KEY, SECRET_KEY)
 result = client.get_balance_valuation({"valuation_asset": "usdt"})
 
 // websocket
-# to do something
+from huobi.linear_swap.ws.account import Account
+client = Account(ACCESS_KEY, SECRET_KEY)
+client.sub({"op": "sub", "topic": "orders.btc-usdt"},
+            lambda x: logger.info(x))
+time.sleep(10)
 ```
 
 ## Usage
@@ -113,8 +117,8 @@ result = client.get_contract_info({"contract_code": "btc-usdt", "support_margin_
 
 ```python
 from huobi.linear_swap.rest.account import Account
-client = Market()
-result = client.get_contract_info({"contract_code": "btc-usdt", "support_margin_mode": "all"})
+client = Account(ACCESS_KEY, SECRET_KEY)
+result = client.get_balance_valuation({"valuation_asset": "usdt"})
 ```
 
 The API key is used for authentication. If the authentication cannot pass, the invoking of private interface will fail.
@@ -135,7 +139,11 @@ result = client.get_balance_valuation({"valuation_asset": "usdt"})
 - Subscription: The method name starts with "sub", it will receive update after sending the subscription.
 
 ```python
-# to do something
+from huobi.linear_swap.ws.market import Market
+client = Market()
+client.sub({"sub": "market.BTC-USDT.kline.1min"}, lambda x: logger.info(x))
+while True:
+    time.sleep(1)
 ```
 
 #### Custom host
