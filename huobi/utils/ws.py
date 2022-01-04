@@ -26,6 +26,7 @@ class Ws:
         self.__auto_reconnect = auto_reconnect
 
         self.__ws = None
+        self.__be_open = False
         self.__be_active_close = False
 
     def __del__(self):
@@ -76,13 +77,16 @@ class Ws:
         logger.info('send data: {}'.format(data))
 
     def __on_open(self, ws):
+        self.__be_open = True
         logger.info('ws open: {}'.format(self.__url))
         if self.__access_key is not None or self.__secret_key is not None:
             self.__send_auth_data('get', self.__host, self.__path,
                                   self.__access_key, self.__secret_key)
-        data = json.dumps(self.__sub_str)
-        self.__ws.send(data)
-        logger.info('send data: {}'.format(data))
+        else:
+            if self.__sub_str is not None:
+                data = json.dumps(self.__sub_str)
+                self.__ws.send(data)
+                logger.info('send data: {}'.format(data))
 
     def __on_msg(self, ws, message):
         plain = gzip.decompress(message).decode()
@@ -95,7 +99,13 @@ class Ws:
             if opdata == 'ping':
                 sdata = plain.replace('ping', 'pong')
                 self.__ws.send(sdata)
-            elif opdata == 'auth' or opdata == 'sub' or opdata == 'unsub':
+            elif opdata == 'auth':
+                logger.info(plain)
+                if self.__sub_str is not None and jdata['err-code'] == 0:
+                    data = json.dumps(self.__sub_str)
+                    self.__ws.send(data)
+                    logger.info('send data: {}'.format(data))
+            elif opdata == 'sub' or opdata == 'unsub' or opdata == 'close':
                 logger.info(plain)
             elif opdata == 'notify':
                 if self.__call_back_fun is not None:
@@ -114,6 +124,7 @@ class Ws:
             logger.error('unknow data: {}'.format(jdata))
 
     def __on_close(self, ws, code, msg):
+        self.__be_open = False
         logger.info("ws close: {} as {}".format(self.__url, code))
         if not self.__be_active_close and self.__auto_reconnect:
             self.connect()
@@ -121,10 +132,17 @@ class Ws:
     def __on_error(self, ws, error):
         logger.error(error)
 
-    def send_msg(self, msg: dict) -> bool:
+    def send_msg(self, msg: dict, time_out_sec: int = 3) -> bool:
         if self.__ws is None:
             return False
+        times_try = 0
+        while not self.__be_open and times_try < time_out_sec:
+            time.sleep(1)
+            times_try += 1
         data = json.dumps(msg)
         self.__ws.send(data)
         logger.info('send data: {}'.format(data))
         return True
+
+    def is_open(self) -> bool:
+        return self.__be_open
