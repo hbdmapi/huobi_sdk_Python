@@ -15,15 +15,8 @@ It supports Spot trading, Coin-M Futures, Coin-M Swaps and USDT-M.
   - [Configuration](#Configuration)
   - [Folder structure](#Folder-Structure)
   - [Client](#Client)
+  - [Request](#Request)
   - [Response](#Response)
-  
-- [Request examples](#Request-examples)
-  - [Market data](#Market-data)
-
-- [Subscription examples](#Subscription-examples)
-  - [Subscribe trade update](#Subscribe-trade-update)
-
-  
 
 ## Quick Start
 
@@ -157,6 +150,10 @@ client = Account(ACCESS_KEY, SECRET_KEY, "your_host")
 # to do something
 ```
 
+### Request
+
+In this SDK, the response is the dict type or None. More detail to see: https://docs.huobigroup.com/docs/spot/v1/en/
+
 ### Response
 
-In this SDK, the response is the json data.
+In this SDK, the response is the json data. More detail to see: https://docs.huobigroup.com/docs/spot/v1/en/
