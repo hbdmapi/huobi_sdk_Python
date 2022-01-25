@@ -1,10 +1,12 @@
 # Huobi Python SDK
 
-This is Huobi Python SDK, requires python >= 3.5.
+This is Huobi Python SDK, requires python >= 3.6.
 
 The SDK API supports both RESTful and websocket to get/sub the market, account and order infomation.
 
 It supports Spot trading, Coin-M Futures, Coin-M Swaps and USDT-M.
+
+You can install this package with `pip3 install huobipy`
 
 ## Table of Contents
 
