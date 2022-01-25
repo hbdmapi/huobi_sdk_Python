@@ -1,7 +1,7 @@
 import sys
 import unittest
 
-sys.path.append('../..')
+sys.path.append('../../src')
 from huobi.linear_swap.rest.market import Market
 from huobi.utils.logger import logger
 

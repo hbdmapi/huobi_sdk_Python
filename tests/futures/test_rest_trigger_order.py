@@ -1,7 +1,7 @@
 import sys
 import unittest
 
-sys.path.append('../..')
+sys.path.append('../../src')
 from huobi.utils.logger import logger
 from huobi.futures.rest.trigger_order import TriggerOrder
 from tests.config import ACCESS_KEY, SECRET_KEY

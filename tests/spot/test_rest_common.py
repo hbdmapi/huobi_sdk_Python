@@ -1,7 +1,7 @@
 import sys
 import unittest
 
-sys.path.append('../..')
+sys.path.append('../../src')
 from huobi.spot.rest.common import Common
 from huobi.utils.logger import logger
 

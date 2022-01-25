@@ -2,7 +2,7 @@ import sys
 import unittest
 import time
 
-sys.path.append('../..')
+sys.path.append('../../src')
 from tests.config import ACCESS_KEY, SECRET_KEY
 from huobi.utils.ws import Ws
 from huobi.utils.logger import logger

@@ -1,7 +1,7 @@
 import sys
 import unittest
 
-sys.path.append('../..')
+sys.path.append('../../src')
 from tests.config import ACCESS_KEY, SECRET_KEY
 from huobi.host import HOST_FUTURES
 from huobi.utils.logger import logger

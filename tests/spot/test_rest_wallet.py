@@ -1,7 +1,7 @@
 import sys
 import unittest
 
-sys.path.append('../..')
+sys.path.append('../../src')
 from huobi.spot.rest.wallet import Wallet
 from huobi.utils.logger import logger
 from tests.config import ACCESS_KEY, SECRET_KEY
