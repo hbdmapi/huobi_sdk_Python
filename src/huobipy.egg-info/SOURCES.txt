@@ -1,8 +1,0 @@
-LICENSE
-README.md
-pyproject.toml
-setup.py
-src/huobipy.egg-info/PKG-INFO
-src/huobipy.egg-info/SOURCES.txt
-src/huobipy.egg-info/dependency_links.txt
-src/huobipy.egg-info/top_level.txt
