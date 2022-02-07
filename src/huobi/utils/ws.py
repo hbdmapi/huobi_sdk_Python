@@ -15,7 +15,7 @@ from huobi.utils.logger import logger
 class Ws:
     def __init__(self, host: str, path: str, sub_str: dict, call_back_fun,
                  access_key: str = None, secret_key: str = None,
-                 auto_reconnect=True):
+                 auto_reconnect=True, be_spot_account = False):
         self.__host = host
         self.__path = path
         self.__url = 'wss://{}{}'.format(self.__host, self.__path)
@@ -24,6 +24,7 @@ class Ws:
         self.__access_key = access_key
         self.__secret_key = secret_key
         self.__auto_reconnect = auto_reconnect
+        self.__be_spot_account = be_spot_account
 
         self.__ws = None
         self.__be_open = False
@@ -54,8 +55,12 @@ class Ws:
         timestamp = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")
 
         # get Signature
-        suffix = 'AccessKeyId={}&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp={}'.format(
-            access_key, parse.quote(timestamp))
+        if self.__be_spot_account:
+            suffix = 'accessKey={}&signatureMethod=HmacSHA256&signatureVersion=2.1&timestamp={}'.format(
+                access_key, parse.quote(timestamp))
+        else:
+            suffix = 'AccessKeyId={}&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp={}'.format(
+                access_key, parse.quote(timestamp))
         payload = '{}\n{}\n{}\n{}'.format(method.upper(), host, path, suffix)
 
         digest = hmac.new(secret_key.encode('utf8'), payload.encode(
@@ -63,15 +68,29 @@ class Ws:
         signature = base64.b64encode(digest).decode()
 
         # data
-        data = {
-            "op": "auth",
-            "type": "api",
-            "AccessKeyId": access_key,
-            "SignatureMethod": "HmacSHA256",
-            "SignatureVersion": "2",
-            "Timestamp": timestamp,
-            "Signature": signature
-        }
+        if self.__be_spot_account:
+            data = {
+                "action": "req",
+                "ch": "auth",
+                "params": {
+                    "authType": "api",
+                    "accessKey": access_key,
+                    "signatureMethod": "HmacSHA256",
+                    "signatureVersion": "2.1",
+                    "timestamp": timestamp,
+                    "signature": signature
+                }
+            }
+        else:
+            data = {
+                "op": "auth",
+                "type": "api",
+                "AccessKeyId": access_key,
+                "SignatureMethod": "HmacSHA256",
+                "SignatureVersion": "2",
+                "Timestamp": timestamp,
+                "Signature": signature
+            }
         data = json.dumps(data)
         self.__ws.send(data)
         logger.info('send data: {}'.format(data))
@@ -89,11 +108,35 @@ class Ws:
                 logger.info('send data: {}'.format(data))
 
     def __on_msg(self, ws, message):
-        plain = gzip.decompress(message).decode()
+        if self.__be_spot_account:
+            plain = message
+        else:
+            plain = gzip.decompress(message).decode()
         jdata = json.loads(plain)
         if 'ping' in jdata:
             sdata = plain.replace('ping', 'pong')
+            # logger.info(sdata)
             self.__ws.send(sdata)
+        elif 'action' in jdata:
+            act = jdata['action']
+            if act == 'ping':
+                sdata = plain.replace('ping', 'pong')
+                # logger.info(sdata)
+                self.__ws.send(sdata)
+            elif act == 'req':
+                logger.info(plain)
+                if 'ch' in jdata and jdata['ch'] == 'auth' and jdata['code'] == 200:
+                    if self.__sub_str is not None:
+                        data = json.dumps(self.__sub_str)
+                        self.__ws.send(data)
+                        logger.info('send data: {}'.format(data))
+            elif act == 'push':
+                if self.__call_back_fun is not None:
+                    self.__call_back_fun(jdata)
+            elif act == 'sub' or act == 'unsub':
+                logger.info(plain)
+            else:
+                logger.error('unknow data: {}'.format(jdata))
         elif 'op' in jdata:
             opdata = jdata['op']
             if opdata == 'ping':

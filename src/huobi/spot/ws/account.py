@@ -13,7 +13,7 @@ class Account():
 
     def sub(self, data: dict, call_back_fun) -> Ws:
         id = data['ch']
-        ws = Ws(self.__host, self.__path, data, call_back_fun, self.__access_key, self.__secret_key)
+        ws = Ws(self.__host, self.__path, data, call_back_fun, self.__access_key, self.__secret_key, be_spot_account=True)
         ws.connect()
         self.__sub_dict[id] = ws
         return ws
