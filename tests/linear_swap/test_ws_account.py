@@ -3,9 +3,10 @@ import unittest
 import time
 
 sys.path.append('../../src')
+sys.path.append('..')
 from huobi.utils.logger import logger
 from huobi.linear_swap.ws.account import Account
-from tests.config import ACCESS_KEY, SECRET_KEY
+from config import ACCESS_KEY, SECRET_KEY
 
 
 class TestWsAccount(unittest.TestCase):

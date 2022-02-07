@@ -2,9 +2,10 @@ import sys
 import unittest
 
 sys.path.append('../../src')
+sys.path.append('../')
 from huobi.spot.rest.sub_user import SubUser
 from huobi.utils.logger import logger
-from tests.config import ACCESS_KEY, SECRET_KEY
+from config import ACCESS_KEY, SECRET_KEY
 
 
 class TestRestSubUser(unittest.TestCase):

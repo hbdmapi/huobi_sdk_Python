@@ -2,9 +2,10 @@ import sys
 import unittest
 
 sys.path.append('../../src')
-from tests.config import ACCESS_KEY, SECRET_KEY
+sys.path.append('../')
+from config import ACCESS_KEY, SECRET_KEY
 from huobi.linear_swap.rest.transfer import Transfer
-from huobi.utils.logger import logger
+from utils.logger import logger
 
 class TestRestAccount(unittest.TestCase):
 

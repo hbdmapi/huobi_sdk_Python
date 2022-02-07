@@ -2,9 +2,10 @@ import sys
 import unittest
 
 sys.path.append('../../src')
+sys.path.append('../')
 from huobi.utils.logger import logger
 from huobi.linear_swap.rest.order import Order
-from tests.config import ACCESS_KEY, SECRET_KEY
+from config import ACCESS_KEY, SECRET_KEY
 
 
 class TestRestOrder(unittest.TestCase):
