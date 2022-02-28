@@ -9,6 +9,14 @@ class Order:
         self.__secret_key = secret_key
         self.__host = host
 
+    def isolated_switch_position_mode(self, data: dict = None) -> json:
+        path = "/linear-swap-api/v1/swap_switch_position_mode"
+        return post(self.__host, path, self.__access_key, self.__secret_key, data)
+
+    def cross_switch_position_mode(self, data: dict = None) -> json:
+        path = "/linear-swap-api/v1/swap_cross_switch_position_mode"
+        return post(self.__host, path, self.__access_key, self.__secret_key, data)
+
     def isolated_order(self, data: dict = None) -> json:
         path = "/linear-swap-api/v1/swap_order"
         return post(self.__host, path, self.__access_key, self.__secret_key, data)
